@@ -83,13 +83,13 @@ async function processJob(job) {
         // fs.writeFileSync(filePath, buffer);
 
         const result = await uploadBufferToCloudinary(buffer, job, folderName);
-        await axios.post(`${BASE_API_URL}/api/images`, {
+        const response = await axios.post(`${BASE_API_URL}/api/images`, {
           publicId: result.public_id,
           url: result.url,
           folder: folderName,
           userId: userId,
         });
-        console.log("result", result.url);
+        console.log("result", response.data.image);
         urls.push(result.url);
       }
     }
