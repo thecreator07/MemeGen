@@ -76,21 +76,25 @@ async function processJob(job) {
 
     for (const part of parts) {
       if (part.inlineData) {
-        const data = part.inlineData.data || "";
-        const buffer = Buffer.from(data, "base64");
-        // console.log(buffer)
-        // const filePath = path.join(process.cwd(), "public", `gemini-test-${iteration}.png`);
-        // fs.writeFileSync(filePath, buffer);
-
-        const result = await uploadBufferToCloudinary(buffer, job, folderName);
-        await axios.post(`${BASE_API_URL}/api/images`, {
-          publicId: result.public_id,
-          url: result.url,
-          folder: folderName,
-          userId: userId,
-        });
-        console.log("result", result.url);
-        urls.push(result.url);
+        try {
+          const data = part.inlineData.data || "";
+          const buffer = Buffer.from(data, "base64");
+          // console.log(buffer)
+          // const filePath = path.join(process.cwd(), "public", `gemini-test-${iteration}.png`);
+          // fs.writeFileSync(filePath, buffer);
+  
+          const result = await uploadBufferToCloudinary(buffer, job, folderName);
+          await axios.post(`${BASE_API_URL}/api/images`, {
+            publicId: result.public_id,
+            url: result.url,
+            folder: folderName,
+            userId: userId,
+          });
+          console.log("result", result.url);
+          urls.push(result.url);
+        } catch (error) {
+          job.log(`Error processing part: ${error.message}`);
+        }
       }
     }
 
