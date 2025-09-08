@@ -1,0 +1,22 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google/genai": "^1.17.0",
+    "axios": "^1.11.0",
+    "bullmq": "^5.58.5",
+    "cloudinary": "^2.7.0",
+    "dotenv": "^17.2.2",
+    "ioredis": "^5.7.0",
+    "node-fetch": "^3.3.2"
+  }
+}
