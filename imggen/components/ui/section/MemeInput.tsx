@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 export default function MemeInput() {
   const [image, setImage] = useState<File | null>(null);
-  const [folderName, setFolderName] = useState("ads/inputs");
+  const [folderName, setFolderName] = useState("meme");
 
   const [description, setDescription] = useState("This is hilarious");
 

@@ -6,7 +6,12 @@ import { uploadBufferToCloudinary } from "./utils/cloudinary.js";
 import { buildAdPrompt } from "./lib/promtBuilder.js";
 import { v2 as cloudinary } from "cloudinary";
 import axios from "axios";
+import express from "express";
 
+const app = express()
+
+;
+const PORT = process.env.PORT || 8080;
 
 configDotenv()
 
@@ -119,3 +124,13 @@ new Worker(
   .on("failed", (job, err) => {
     console.error(`Job ${job?.id} failed:`, err);
   });
+
+  // simple health check
+app.get("/", (req, res) => {
+  res.send("Worker service is running ✅");
+});
+
+// start server
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
