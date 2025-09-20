@@ -29,9 +29,10 @@ export async function POST(req: NextRequest) {
     let imageUrl: string | undefined = undefined;
 
     //i have to check if images are greater than 5 then do not process
-    const imageCount = (await ImageModel.find({ user: _id })).length
-    if (imageCount > 5) {
-      return NextResponse.json({ message: "image count greater than 5" })
+    const imageCount = await ImageModel.countDocuments({ user: String(_id) });
+    console.log("image length", imageCount)
+    if (imageCount >= 5) {
+      return NextResponse.json({ success: false, message: `image limit exceeding` }, { status: 400 })
     }
     // Upload image only if provided and valid
     if (image && image.size > 0) {
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
         imageUrl = imgRes.secure_url;
       } catch (uploadError) {
         console.error("Image upload failed:", uploadError);
-        return NextResponse.json({ error: "Image upload failed" }, { status: 500 });
+        return NextResponse.json({ success:false,message: "Image upload failed" }, { status: 500 });
       }
     }
 
@@ -64,9 +65,9 @@ export async function POST(req: NextRequest) {
 
     console.log("Enqueued job ID:", jobIds);
 
-    return NextResponse.json({ jobIds });
+    return NextResponse.json({ jobIds },{status:201});
   } catch (err) {
     console.error("Job enqueue failed:", err);
-    return NextResponse.json({ error: "Job enqueue failed" }, { status: 500 });
+    return NextResponse.json({ success:false,message: "Job enqueue failed" }, { status: 500 });
   }
 }

@@ -5,7 +5,7 @@ import FileUpload from "../UploadFile";
 import InputField from "../InputField";
 import { Button } from "../button";
 import { motion } from "framer-motion";
-
+import { toast } from 'sonner'
 export default function MemeInput() {
   const [image, setImage] = useState<File | null>(null);
   const [folderName, setFolderName] = useState("meme");
@@ -23,12 +23,12 @@ export default function MemeInput() {
 
     formData.append("description", description);
     formData.append("folderName", folderName);
-
-    const worker_url=process.env.WORKER_URL||"http://localhost:5000";
- 
+    console.log(process.env.NEXT_PUBLIC_WORKER_URL);
+    const worker_url = process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:5000";
+    console.log(worker_url);
     setLoading(true);
     try {
-      const check = await fetch(worker_url,  {
+      const check = await fetch(worker_url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -46,10 +46,13 @@ export default function MemeInput() {
       const data = await res.json();
       if (res.ok) {
         console.log("Job pushed successfully");
+        toast.loading("Image processing....",{duration:10000})
       } else {
-        alert(data.error || "Error creating job");
+        toast.error(`Message: ${data.message}`,{duration:2000})
+        // alert(data.error || "Error creating job");
       }
     } catch (e) {
+      toast.error("image generation server failed:")
       console.error("Job creation failed:", e);
     } finally {
       setLoading(false);

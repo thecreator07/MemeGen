@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/pagination";
 import CloudinaryImage from "../CloudinaryImage";
 import { Image } from "@/models/image.model";
+import { toast } from "sonner";
 
 const LIMIT = 8; // Customize how many images per page
 
@@ -31,11 +32,14 @@ export default function Gallery() {
       if (data.success) {
         setImages(data.images);
         setTotalPages(data.pagination.pages);
+        toast.success("new image generated");
       } else {
+        toast.error(data.message);
         setError(data.message || "Something went wrong");
       }
     } catch (err: unknown) {
       setError("Failed to load images.");
+      toast.error("Failed to load images.");
       console.error(
         err instanceof Error ? err.message : "Failed to load images"
       );
