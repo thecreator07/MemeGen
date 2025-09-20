@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/pagination";
 import CloudinaryImage from "../CloudinaryImage";
 import { Image } from "@/models/image.model";
-import { useSession } from "next-auth/react";
 
 const LIMIT = 8; // Customize how many images per page
 
