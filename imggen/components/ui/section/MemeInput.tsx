@@ -55,7 +55,7 @@ export default function MemeInput() {
         className="text-center max-w-3xl mb-16"
       >
         <h1 className="text-5xl md:text-6xl font-extrabold text-slate-800 leading-tight">
-          Create Hilarious Memes in Seconds
+          Create Hilarious Web3 Memes in Seconds
 
         </h1>
         <p className="mt-6 text-lg md:text-xl text-slate-600">
