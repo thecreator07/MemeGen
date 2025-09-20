@@ -32,7 +32,7 @@ export default function Gallery() {
       if (data.success) {
         setImages(data.images);
         setTotalPages(data.pagination.pages);
-        toast.success("new image generated");
+        // toast.success("new image generated",{duration:1000});
       } else {
         toast.error(data.message);
         setError(data.message || "Something went wrong");
