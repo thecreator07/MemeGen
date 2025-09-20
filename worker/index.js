@@ -7,23 +7,37 @@ import { buildAdPrompt } from "./lib/promtBuilder.js";
 import { v2 as cloudinary } from "cloudinary";
 import axios from "axios";
 import express from "express";
-
-const app = express()
-
-;
-const PORT = process.env.PORT || 8080;
+import cors from "cors";
 
 configDotenv()
 
+const app = express();
+const PORT = process.env.PORT || 8080;
 const BASE_API_URL = process.env.API_URL || "http://localhost:3000";
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  BASE_API_URL,
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-
 console.log(process.env.GEMINI_API_KEY)
 const connection = new IORedis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
 const GOOGLE_API_KEY = process.env.GEMINI_API_KEY;
@@ -38,16 +52,16 @@ async function urlToBase64(url) {
 
 async function processJob(job) {
   try {
-    const {  description, folderName, userId,imageUrl } = job.data;
+    const { description, folderName, userId, imageUrl } = job.data;
     console.log(description, imageUrl);
 
     const urls = [];
-    if(!userId) {
+    if (!userId) {
       job.log("Missing userId");
       return { urls };
     }
-    const prompts=[]
-    if(!description) {
+    const prompts = []
+    if (!description) {
       job.log("Missing description");
       return "Provide description"
     }
@@ -58,8 +72,6 @@ async function processJob(job) {
       console.log("mime", image.mime);
       prompts.push({ inlineData: { mimeType: image.mime, data: image.base64 } });
     }
-
-
 
     // const productbase64 = await urlToBase64(productUrl)
     // console.log("productbase64", productbase64)
@@ -83,6 +95,7 @@ async function processJob(job) {
       if (part.inlineData) {
         const data = part.inlineData.data || "";
         const buffer = Buffer.from(data, "base64");
+        
         // console.log(buffer)
         // const filePath = path.join(process.cwd(), "public", `gemini-test-${iteration}.png`);
         // fs.writeFileSync(filePath, buffer);
@@ -125,9 +138,9 @@ new Worker(
     console.error(`Job ${job?.id} failed:`, err);
   });
 
-  // simple health check
+// simple health check
 app.get("/", (req, res) => {
-  res.send("Worker service is running ✅");
+  res.status(200).send("Worker service is start running");
 });
 
 // start server

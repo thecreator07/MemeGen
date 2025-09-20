@@ -3,6 +3,7 @@ import { uploadFileToCloudinary } from "@/utils/cloudinary";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/options";
+import ImageModel from "@/models/image.model";
 
 export const runtime = "nodejs"; // Ensure Node.js runtime (not edge)
 
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   }
 
   console.log("session user:", session.user._id);
-
+  const { _id } = session.user;
   try {
     const form = await req.formData();
 
@@ -27,7 +28,12 @@ export async function POST(req: NextRequest) {
 
     let imageUrl: string | undefined = undefined;
 
-    // ✅ Upload image only if provided and valid
+    //i have to check if images are greater than 5 then do not process
+    const imageCount = (await ImageModel.find({ user: _id })).length
+    if (imageCount > 5) {
+      return NextResponse.json({ message: "image count greater than 5" })
+    }
+    // Upload image only if provided and valid
     if (image && image.size > 0) {
       try {
         const imgRes = await uploadFileToCloudinary(image, `${folderName}/inputs`);
@@ -38,7 +44,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ✅ Enqueue job to BullMQ
+    // Enqueue job to BullMQ
     const job = await adsQueue.add(
       "generate-meme", // job name inside the queue
       {

@@ -1,5 +1,6 @@
 'use client";';
-import {  ExternalLink, Trash2 } from "lucide-react"; // ExternalLink icon for opening the image
+import { ExternalLink, Trash2 } from "lucide-react"; // ExternalLink icon for opening the image
+import { useSession } from "next-auth/react";
 
 import { CldImage } from "next-cloudinary";
 
@@ -31,9 +32,11 @@ const CloudinaryImage = ({
   //   document.body.removeChild(link);
   // };
 
+  const session = useSession();
   const handleOpen = () => {
     window.open(url, "_blank");
   };
+  
   const handleDelete = async (public_id: string) => {
     try {
       const response = await fetch(`/api/images`, {
@@ -54,13 +57,15 @@ const CloudinaryImage = ({
       {/* Open Button Icons */}
       {showOpen && (
         <div className="absolute top-2 right-2 z-10 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            onClick={() => handleDelete(public_id)}
-            aria-label="Delete image"
-            className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
-          >
-            <Trash2 className="w-5 h-5 text-gray-700" />
-          </button>
+          {session.data?.user?.email==="amankumarprasad72@gmail.com" && (
+            <button
+              onClick={() => handleDelete(public_id)}
+              aria-label="Delete image"
+              className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+            >
+              <Trash2 className="w-5 h-5 text-gray-700" />
+            </button>
+          )}
           <button
             onClick={handleOpen}
             aria-label="Open image in a new tab"

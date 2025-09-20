@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/pagination";
 import CloudinaryImage from "../CloudinaryImage";
 import { Image } from "@/models/image.model";
+import { useSession } from "next-auth/react";
 
 const LIMIT = 8; // Customize how many images per page
 
@@ -21,7 +22,8 @@ export default function Gallery() {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  // const session = useSession();
+  // console.log("username", session.data?.user?.email);
   const fetchImages = async (page: number, silent = false) => {
     if (!silent) setLoading(true);
     try {
@@ -42,7 +44,7 @@ export default function Gallery() {
       if (!silent) setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchImages(page);
   }, [page]);
@@ -91,9 +93,13 @@ export default function Gallery() {
   return (
     <section className="py-12 bg-gray-100 px-4">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8 text-slate-800">
-          My Image Gallery
+        <h2 className="text-3xl font-bold text-center mb-2 text-slate-800">
+          Meme Gallery
         </h2>
+
+        <p className="text-center mb-6 text-slate-600">
+          Maximum of 5 image generations per user
+        </p>
 
         {error && <p className="text-red-500 text-center">{error}</p>}
 
@@ -151,5 +157,4 @@ export default function Gallery() {
       </div>
     </section>
   );
-};
-
+}

@@ -24,8 +24,20 @@ export default function MemeInput() {
     formData.append("description", description);
     formData.append("folderName", folderName);
 
+    const worker_url=process.env.WORKER_URL||"http://localhost:5000";
+ 
     setLoading(true);
     try {
+      const check = await fetch(worker_url,  {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const status = check.status === 200;
+      if (!status) {
+        return "Image generation server not running";
+      }
       const res = await fetch("/api/imginput", {
         method: "POST",
         body: formData,
@@ -56,11 +68,11 @@ export default function MemeInput() {
       >
         <h1 className="text-5xl md:text-6xl font-extrabold text-slate-800 leading-tight">
           Create Hilarious Web3 Memes in Seconds
-
         </h1>
         <p className="mt-6 text-lg md:text-xl text-slate-600">
-         Generate funny memes instantly - upload an image or type text. AI-powered, easy-to-use meme maker for quick laughs and social sharing!
-
+          Generate funny memes instantly - upload an image or type text.
+          AI-powered, easy-to-use meme maker for quick laughs and social
+          sharing!
         </p>
       </motion.div>
 
